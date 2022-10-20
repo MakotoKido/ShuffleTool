@@ -1,15 +1,19 @@
 package com.example.shuffletool.service;
 
 import java.nio.file.Path;
-import java.util.List;
 
+// デッキリストと設定値のファイル読み書きを担当するサービスクラス
 public interface FileService {
+	// デッキリストのファイルを読み込み、エンティティに保持するメソッド
+	public void loadDeck(Path path);
+	
+	// 入力されたデッキリストを読み込み、ファイルに書き込んでエンティティに保持するメソッド
+	public void writeDeck(String deck);	
+	
+	// 設定値のファイルを読み込み、エンティティに保持
+	public void loadConfig(Path path);
+	
+	// 入力された設定値を読み込み、ファイルに書き込んでエンティティに保持するメソッド
+	public void writeConfig(String config);
 
-//	与えられたパスのファイルを読み込み、List<String>で返却する
-//	ファイルの入力は後からアップロード形式に変更予定のため、Deprecated
-	@Deprecated
-	public List<String> loadFile(Path path);
-	
-	
-	
 }
