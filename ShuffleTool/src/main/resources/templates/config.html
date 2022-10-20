@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!-- 設定値を表示、変更を入力するページ -->
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8" />
+<title>設定</title>
+
+<!-- Bootstrap -->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+	crossorigin="anonymous">
+</head>
+
+<body>
+	<header>
+		<!-- Navbar -->
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="#">シャッフルツール</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<!-- ディールシャッフルの枚数などの設定画面を後から作る --> <a class="nav-link"
+						href="/conf">設定</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
+
+	<!-- 設定項目を表示・入力 -->
+	<h1>設定</h1>
+	<form th:action="@{/conf}" method="post">
+		<h2>ディールシャッフル</h2>
+		<div class="row mb-3">
+			<label for="dealstacks" class="col-sm-5 col-form-label">カードを分ける山の個数(3個以上)</label>
+			<div class="col-sm-5">
+				<input type="text" class="form-control" id="dealstacks" name="dealstacks">
+			</div>
+		</div>
+		<div class="row mb-3">
+			<label for="dealfluc" class="col-sm-5 col-form-label">山に配るカードの枚数が0,2枚にブレる確率の合計(単位:%)</label>
+			<div class="col-sm-5">
+				<input type="text" class="form-control" id="dealfluc" name="dealfluc">
+			</div>
+		</div>
+		<h2>ファローシャッフル</h2>
+		<div class="row mb-3">
+			<label for="farofluc" class="col-sm-5 col-form-label">山を組み合わせる際に、間に挟まるカードの枚数が0,2,3枚にブレる確率の合計(単位:%)</label>
+			<div class="col-sm-5">
+				<input type="text" class="form-control" id="farofluc" name="farofluc">
+			</div>
+		</div>
+		<h2>ヒンズーシャッフル・ファローシャッフル共通</h2>
+		<div class="row mb-3">
+			<label for="splitfluc" class="col-sm-5 col-form-label">分ける山の枚数が半分からブレる枚数のデッキに対する割合(単位:%)</label>
+			<div class="col-sm-5">
+				<input type="text" class="form-control" id="splitfluc" name="splitfluc">
+			</div>
+		</div>
+		<input type="submit" value="更新" class="btn btn-dark">
+	</form>
+
+</body>

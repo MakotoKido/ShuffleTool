@@ -3,6 +3,9 @@ package com.example.shuffletool.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.example.shuffletool.entity.Config;
 import com.example.shuffletool.entity.DeckList;
 
-// ファイルの読み書きにを行うサービスクラス
+// ファイルの読み書きを行うサービスクラス
 @Service
 public class FileServiceImpl implements FileService {
 	/*
@@ -30,7 +33,7 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public void writeDeck(String deck) {
+	public void writeDeck(String deck, Path path) {
 		// TODO Auto-generated method stub
 
 	}
@@ -79,6 +82,7 @@ public class FileServiceImpl implements FileService {
 			// TODO:変換時のエラー回避
 			int val = Integer.parseInt(arr[1]); // 設定値をint型に変換
 
+			// TODO:ここswitchでよくね
 			if (DSTACK.equals(attrib)) {
 				config.setDealStacks(val);
 				dstackExists = true;
@@ -112,9 +116,26 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public void writeConfig(String config) {
-		// TODO Auto-generated method stub
+	public void writeConfig(Path path, String... configs) {
+		// 書き込めるように入力値をlinesに格納
+		List<String> lines = new ArrayList<String>();
+		for (String str : configs) {
+			// 設定値を表す文字列であるかをチェック、関係ない行は無視
+			if (str.startsWith(DSTACK) || str.startsWith(FFLUC) || str.startsWith(DFLUC) || str.startsWith(SFLUC)) {
+				lines.add(str);
+			}
+			// 記載のない設定項目はloadでデフォルトに設定されるのでここでは処理しない
+		}
 
+		// 書き込み(上書き)
+		try {
+			System.out.println(lines);
+			Path p = Files.write(path, lines, StandardOpenOption.TRUNCATE_EXISTING);
+			System.out.println(p);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -122,7 +143,7 @@ public class FileServiceImpl implements FileService {
 	 */
 
 	// 与えられたパスのテキストファイルを1行ごとにList<String>で返す
-	public List<String> loadFile(Path path) {
+	private List<String> loadFile(Path path) {
 		List<String> lines = null;
 		try {
 			lines = Files.readAllLines(path);
@@ -133,4 +154,5 @@ public class FileServiceImpl implements FileService {
 		}
 		return lines;
 	}
+
 }
