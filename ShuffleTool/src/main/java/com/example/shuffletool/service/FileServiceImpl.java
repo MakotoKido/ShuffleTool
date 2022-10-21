@@ -116,22 +116,17 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public void writeConfig(Path path, String... configs) {
-		// 書き込めるように入力値をlinesに格納
+	public void writeConfig(Path path, String dealstacks, String dealfluc, String farofluc, String splitfluc) {
+		// 書き込めるように入力値を作成してlinesに格納
 		List<String> lines = new ArrayList<String>();
-		for (String str : configs) {
-			// 設定値を表す文字列であるかをチェック、関係ない行は無視
-			if (str.startsWith(DSTACK) || str.startsWith(FFLUC) || str.startsWith(DFLUC) || str.startsWith(SFLUC)) {
-				lines.add(str);
-			}
-			// 記載のない設定項目はloadでデフォルトに設定されるのでここでは処理しない
-		}
+		lines.add(DSTACK + dealstacks);
+		lines.add(DFLUC + dealfluc);
+		lines.add(FFLUC + farofluc);
+		lines.add(SFLUC + splitfluc);
 
 		// 書き込み(上書き)
 		try {
-			System.out.println(lines);
-			Path p = Files.write(path, lines, StandardOpenOption.TRUNCATE_EXISTING);
-			System.out.println(p);
+			Files.write(path, lines, StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

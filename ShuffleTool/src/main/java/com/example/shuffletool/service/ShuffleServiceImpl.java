@@ -7,13 +7,17 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.shuffletool.entity.Config;
 import com.example.shuffletool.entity.DeckList;
 
 // シャッフル関連のメソッドを実装したクラス
 @Service
 public class ShuffleServiceImpl implements ShuffleService {
+	@Autowired
+	Config conf;
 	// シャッフル方法のキーワード
 	private final String DEAL = "deal"; // ディールシャッフル
 	private final String HINDU = "hindu"; // ヒンズーシャッフル
@@ -56,9 +60,9 @@ public class ShuffleServiceImpl implements ShuffleService {
 
 	private List<String> dealShuffle(List<String> list) {
 		// 設定された個数(デフォルト7個)山を作り、その上にデッキから0-2枚ずつ(標準1枚、設定した確率(デフォルト5%)で0枚か2枚になる)乗せ、並べた順に山をまとめる
-		// TODO:設定値(一旦固定)
-		int stacks = 7; // 作る山の個数
-		int flucrate = 5; // 枚数のぶれる確率(単位:%)
+		// 設定値を取得
+		int stacks = conf.getDealStacks(); // 作る山の個数
+		int fluc = conf.getDealFluc(); // 枚数のぶれる確率(単位:%)
 
 		// 分けた山に割り振られたカードのインデックスを保持するmapを定義
 		// 山ごとの正確な枚数が予測できないため、一旦結果をStringBuilderに格納する(,を区切り文字とする)
@@ -79,9 +83,9 @@ public class ShuffleServiceImpl implements ShuffleService {
 					int rand = new Random().nextInt(100);
 					// 割り振る枚数
 					int take = 0;
-					if (rand >= flucrate) {
+					if (rand >= fluc) {
 						take = 1; // 1枚割り振る
-					} else if (rand >= flucrate / 2 && rand < flucrate) {
+					} else if (rand >= fluc / 2 && rand < fluc) {
 						take = 2; // 2枚割り振る
 					} else {
 						// 0枚割り振る
@@ -113,11 +117,10 @@ public class ShuffleServiceImpl implements ShuffleService {
 
 	private List<String> hinduShuffle(List<String> list) {
 		// デッキの下から、デッキの枚数の半分±設定値(デフォルトはデッキの13%)以内のランダムの枚数を取り、デッキの上に乗せる
+		// 設定値を取得
+		int flucrate = conf.getSplitFluc(); // 取る山の枚数がちょうど半分からブレる割合(単位:%)
 		// デッキの枚数
 		int count = list.size();
-		// TODO:設定値は一旦定数で
-		// 取る山の枚数がちょうど半分からブレる割合(単位:%)
-		int flucrate = 13;
 
 		// デッキを2つに分ける
 		Map<String, int[]> stacks = splitDeck(count, flucrate);
@@ -133,19 +136,17 @@ public class ShuffleServiceImpl implements ShuffleService {
 	}
 
 	private List<String> faroShuffle(List<String> list) {
-		// TODO:デッキの下から、デッキの枚数の半分±設定値(デフォルトはデッキの13%)以内のランダムの枚数を取り、できた2つの山のカードを互いに間に挟み込むようにして組み合わせる。
+		// デッキの下から、デッキの枚数の半分±設定値(デフォルトはデッキの13%)以内のランダムの枚数を取り、できた2つの山のカードを互いに間に挟み込むようにして組み合わせる。
 		// 間に挟まるカードの枚数は標準1枚、設定した確率で0,2,3枚挟まる
 
+		// 設定値を取得
+		int sFluc = conf.getSplitFluc(); // 取る山の枚数がちょうど半分からブレる割合(単位:%)
+		int fFluc = conf.getFaroFluc(); // 山を組み合わせる際に、間に挟まるカードが0,2,3枚のいずれかになる確率(単位:%)
 		// デッキの枚数
 		int count = list.size();
-		// TODO:設定値は一旦定数で
-		// 取る山の枚数がちょうど半分からブレる割合(単位:%)
-		int flucrate = 13;
-		// 山を組み合わせる際に、間に挟まるカードが0,2,3枚のいずれかになる確率(単位:%)
-		int btwfluc = 20;
 
 		// デッキを2つに分ける
-		Map<String, int[]> stacks = splitDeck(count, flucrate);
+		Map<String, int[]> stacks = splitDeck(count, sFluc);
 		// デッキの上下の並びを表す配列を取得
 		int[] top = stacks.get("top");
 		int[] bottom = stacks.get("bottom");
@@ -171,11 +172,11 @@ public class ShuffleServiceImpl implements ShuffleService {
 			rand = new Random().nextInt(100);
 			int take = 0;
 			// TODO:説明
-			if (rand >= btwfluc) {
+			if (rand >= fFluc) {
 				take = 1;
-			} else if (rand < btwfluc && rand >= btwfluc * 2 / 3) {
+			} else if (rand < fFluc && rand >= fFluc * 2 / 3) {
 				take = 3;
-			} else if (rand < btwfluc && rand >= btwfluc * 2 / 3) {
+			} else if (rand < fFluc && rand >= fFluc * 2 / 3) {
 				take = 2;
 			}
 

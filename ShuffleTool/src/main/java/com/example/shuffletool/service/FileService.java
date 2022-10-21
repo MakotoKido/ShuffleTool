@@ -14,6 +14,6 @@ public interface FileService {
 	public void loadConfig(Path path);
 	
 	// 入力された設定値を読み込み、ファイルに書き込んでエンティティに保持するメソッド
-	public void writeConfig(Path path, String... configs);
+	public void writeConfig(Path path, String dealstacks, String dealfluc, String farofluc, String splitfluc);
 
 }

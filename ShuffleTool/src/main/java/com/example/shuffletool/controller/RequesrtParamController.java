@@ -41,6 +41,16 @@ public class RequesrtParamController {
 		}
 		// デッキリストを読み込み、エンティティに保持
 		fileservice.loadDeck(path);
+
+		// シャッフルの設定値を読み込み
+		// 設定ファイルのパスを取得
+		try {
+			path = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("conf/config.txt").toURI());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		// 設定ファイル読み込み
+		fileservice.loadConfig(path);
 		// 読み込み結果をビューで表示するための準備
 		model.addAttribute(decklist);
 		// TODO:戻り値要検討
@@ -73,26 +83,6 @@ public class RequesrtParamController {
 		// TODO:必要に応じて引数をつけて現在の設定値をvalueにセット
 		return "config";
 	}
-	// 設定を読み込み
-	// TODO:動作確認のため仮、初期化で使用するものだと思ったまる
-	// @GetMapping("conf")
-	// public String configView(Model model) {
-	// // 設定ファイルのパスを取得
-	// Path path = null;
-	// try {
-	// path =
-	// Path.of(ShuffleToolApplication.class.getClassLoader().getResource("conf/config.txt").toURI());
-	// } catch (URISyntaxException e) {
-	// e.printStackTrace();
-	// }
-	// // 設定ファイル読み込み
-	// fileservice.loadConfig(path);
-	//
-	// // シャッフル画面に戻る
-	// // modelは与えないとぬるぽになる
-	// model.addAttribute(decklist);
-	// return "result";
-	// }
 
 	// 画面に入力された設定値を受け取り、ファイルに書き込んでエンティティに保持する
 	@PostMapping("conf")
@@ -102,20 +92,14 @@ public class RequesrtParamController {
 		// 設定ファイルのパスを取得
 		Path path = null;
 		try {
-			// TODO:パスがおかしいので修正
 			path = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("conf/config.txt").toURI());
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		// 書き込む内容を作成(TODO:コントローラーが長くなるので切り離したい)
-		dealstacks = "dealstacks=" + dealstacks;
-		dealfluc = "dealfluc=" + dealfluc;
-		farofluc = "farofluc=" + farofluc;
-		splitfluc = "splitfluc=" + splitfluc;
 
 		// ファイルを書き込み
 		fileservice.writeConfig(path, dealstacks, dealfluc, farofluc, splitfluc);
-		// TODO:書き込んだ内容をエンティティに保持(parseIntとかが面倒になってしまったし動作確認)
+		// 書き込んだ内容をエンティティに保持
 		fileservice.loadConfig(path);
 		// シャッフル画面に表示するmodelを設定
 		model.addAttribute(decklist);
