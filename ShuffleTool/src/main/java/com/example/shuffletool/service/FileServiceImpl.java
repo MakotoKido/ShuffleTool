@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +33,34 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public void writeDeck(String deck, Path path) {
-		// TODO Auto-generated method stub
-
+		// ファイルを書き込めるよう、listに格納
+		List<String> line = new ArrayList<String>();
+		line.add(deck);
+		// 書き込み(上書き)
+		try {
+			Files.write(path, line, StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	// デッキリストをtextareaの初期値として表示できるようにStringに変換
+	@Override
+	public String deckToString() {
+		// 結果を格納する
+		StringBuilder builder = new StringBuilder();
+		// デッキリストを取得
+		List<String> list = decklist.getOriginal();
+		
+		// listの要素1つずつに改行文字を挟んで1つの文字列にする
+		for(String s: list) {
+			builder.append(s + "&#13;");
+		}
+		// 最後の改行文字は不要なので削除
+		builder.delete(builder.length() - 5, builder.length());
+		
+		return builder.toString();
 	}
 
 	/*
@@ -152,6 +177,6 @@ public class FileServiceImpl implements FileService {
 			e.printStackTrace();
 		}
 		return lines;
-	}
+	}	
 
 }

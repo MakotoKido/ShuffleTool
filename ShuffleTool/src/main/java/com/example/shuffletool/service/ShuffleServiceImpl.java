@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.example.shuffletool.entity.Config;
 import com.example.shuffletool.entity.DeckList;
 
+// TODO:設定値が0など、例外処理を必要なところにつける
 // シャッフル関連のメソッドを実装したクラス
 @Service
 public class ShuffleServiceImpl implements ShuffleService {
