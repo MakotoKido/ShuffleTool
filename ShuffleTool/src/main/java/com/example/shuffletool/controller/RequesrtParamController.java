@@ -5,7 +5,10 @@ import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.example.shuffletool.ShuffleToolApplication;
@@ -24,8 +27,8 @@ public class RequesrtParamController {
 	@Autowired
 	private DeckList decklist;
 	@Autowired
-	private Config config;
-
+	private Config conf;
+	
 	/*
 	 * 最初に表示するページを取得 デッキリストの入力を行う
 	 */
@@ -79,16 +82,22 @@ public class RequesrtParamController {
 	 */
 	// 設定値を入力する画面に遷移
 	@GetMapping("conf")
-	public String configView() {
+	public String configView(Model model) {
 		// TODO:必要に応じて引数をつけて現在の設定値をvalueにセット
+		System.out.println(conf.getDealFluc());
+		model.addAttribute(conf);
 		return "config";
 	}
 
 	// 画面に入力された設定値を受け取り、ファイルに書き込んでエンティティに保持する
 	@PostMapping("conf")
-	public String setConfig(Model model, @RequestParam String dealstacks, @RequestParam String dealfluc,
-			@RequestParam String farofluc, @RequestParam String splitfluc) {
-		// TODO:ばりでーしょん(別クラスになるだろうけど)
+	public String setConfig(Model model, @ModelAttribute @Validated Config conf, BindingResult result) {
+		// TODO:ばりでーしょん、なぜか適用されない
+		System.out.println(conf.getDealFluc());
+		// 入力チェックされた場合
+		if(result.hasErrors()) {
+			return "config";
+		}
 		// 設定ファイルのパスを取得
 		Path path = null;
 		try {
@@ -98,7 +107,7 @@ public class RequesrtParamController {
 		}
 
 		// ファイルを書き込み
-		fileservice.writeConfig(path, dealstacks, dealfluc, farofluc, splitfluc);
+		fileservice.writeConfig(path, conf);
 		// 書き込んだ内容をエンティティに保持
 		fileservice.loadConfig(path);
 		// シャッフル画面に表示するmodelを設定
@@ -106,5 +115,14 @@ public class RequesrtParamController {
 		// シャッフル画面に戻る
 		return "result";
 	}
-
+	
+	/*
+	 * エラー画面から戻る
+	 */
+	@PostMapping("entry")
+	public String backEntry(Model model) {
+		// エラー後なのでいろいろ初期化して初めに戻る
+		model.addAttribute(decklist);
+		return "result";
+	}
 }

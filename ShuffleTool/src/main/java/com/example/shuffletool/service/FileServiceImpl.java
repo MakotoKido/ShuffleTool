@@ -82,21 +82,25 @@ public class FileServiceImpl implements FileService {
 			// TODO:変換時のエラー回避
 			int val = Integer.parseInt(arr[1]); // 設定値をint型に変換
 
-			// TODO:ここswitchでよくね
-			if (DSTACK.equals(attrib)) {
+			switch (attrib) {
+			case DSTACK:
 				config.setDealStacks(val);
 				dstackExists = true;
-			} else if (DFLUC.equals(attrib)) {
+				break;
+			case DFLUC:
 				config.setDealFluc(val);
 				dflucExists = true;
-			} else if (SFLUC.equals(attrib)) {
+				break;
+			case SFLUC:
 				config.setSplitFluc(val);
 				sflucExists = true;
-			} else if (FFLUC.equals(attrib)) {
+				break;
+			case FFLUC:
 				config.setFaroFluc(val);
 				fflucExists = true;
-			} else {
-				// 余計な部分が設定ファイルに書かれている場合
+				break;
+			default:
+				// 何もしない
 			}
 		}
 
@@ -116,13 +120,13 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@Override
-	public void writeConfig(Path path, String dealstacks, String dealfluc, String farofluc, String splitfluc) {
+	public void writeConfig(Path path, Config config) {
 		// 書き込めるように入力値を作成してlinesに格納
 		List<String> lines = new ArrayList<String>();
-		lines.add(DSTACK + dealstacks);
-		lines.add(DFLUC + dealfluc);
-		lines.add(FFLUC + farofluc);
-		lines.add(SFLUC + splitfluc);
+		lines.add(DSTACK + "=" + config.getDealStacks());
+		lines.add(DFLUC + "=" + config.getDealFluc());
+		lines.add(FFLUC + "=" + config.getFaroFluc());
+		lines.add(SFLUC + "=" + config.getSplitFluc());
 
 		// 書き込み(上書き)
 		try {

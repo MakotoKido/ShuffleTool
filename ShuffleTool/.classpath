@@ -6,6 +6,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path=".settings"/>
+	<classpathentry kind="src" path="target/maven-status"/>
+	<classpathentry kind="src" path="target/maven-archiver"/>
 	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

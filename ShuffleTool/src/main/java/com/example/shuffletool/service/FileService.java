@@ -2,6 +2,8 @@ package com.example.shuffletool.service;
 
 import java.nio.file.Path;
 
+import com.example.shuffletool.entity.Config;
+
 // デッキリストと設定値のファイル読み書きを担当するサービスクラス
 public interface FileService {
 	// デッキリストのファイルを読み込み、エンティティに保持するメソッド
@@ -14,6 +16,6 @@ public interface FileService {
 	public void loadConfig(Path path);
 	
 	// 入力された設定値を読み込み、ファイルに書き込んでエンティティに保持するメソッド
-	public void writeConfig(Path path, String dealstacks, String dealfluc, String farofluc, String splitfluc);
+	public void writeConfig(Path path, Config config);
 
 }
