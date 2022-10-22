@@ -29,34 +29,43 @@ public class RequesrtParamController {
 	@Autowired
 	private Config conf;
 
+	// 各種ファイルのパス
+	// デッキリスト
+	Path deckpath = null;
+	// 設定
+	Path confpath = null;
+
+	// 各種パスを設定
+	private void setupPath() {
+		try {
+			deckpath = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("deck/decklist.txt").toURI());
+			confpath = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("conf/config.txt").toURI());
+		} catch (URISyntaxException e) {
+			// TODO:エラー時の処理
+			e.printStackTrace();
+		} catch (Exception e) {
+			// 予期せぬエラー
+			e.printStackTrace();
+		}
+	}
+
+	// TODO:初期化メソッドが欲しい、あとタイミング
+
 	/*
 	 * 最初に表示するページを取得 デッキリストの入力を行う
 	 */
 	// 各種値をファイルに保持している値に初期化、デッキリストの入力画面を表示
 	@GetMapping("entry")
 	public String entryView(Model model) {
-		// デッキリストのパスを取得
-		Path path = null;
-		try {
-			path = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("decklist.txt").toURI());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		// 各種パスのセットアップ
+		setupPath();
 		// デッキリストを読み込み、エンティティに保持
-		fileservice.loadDeck(path);
+		fileservice.loadDeck(deckpath);
 		// 読み込んだデッキリストの改行入りStringを取得、初期値にセット
 		String initial = fileservice.deckToString();
 		model.addAttribute("deck", initial);
-
-		// シャッフルの設定値を読み込み
-		// 設定ファイルのパスを取得
-		try {
-			path = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("conf/config.txt").toURI());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
 		// 設定ファイル読み込み
-		fileservice.loadConfig(path);
+		fileservice.loadConfig(confpath);
 		// 入力画面へ
 		return "entry";
 	}
@@ -64,18 +73,11 @@ public class RequesrtParamController {
 	// デッキリストの入力を受け取り、シャッフル画面を表示
 	@PostMapping("entry")
 	public String resultView(@RequestParam String deck, Model model) {
-		// デッキリストのパスを取得
-		Path path = null;
-		try {
-			path = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("decklist.txt").toURI());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
 		// TODO:デッキリスト入力値のバリデーションを検討
 		// 入力内容をファイルに書き込み
-		fileservice.writeDeck(deck, path);
+		fileservice.writeDeck(deck, deckpath);
 		// 書き込んだ内容を読み込み
-		fileservice.loadDeck(path);
+		fileservice.loadDeck(deckpath);
 		// シャッフル画面に表示するデッキリストをセット
 		// TODO:formと同様の挙動が作れるなら、addattribute不要説
 		model.addAttribute(decklist);
@@ -88,17 +90,10 @@ public class RequesrtParamController {
 	// シャッフル方法を受け取りシャッフル後のデッキリストを表示
 	@PostMapping("result")
 	public String resultShuffle(@RequestParam String shuffle, Model model) {
-		// TODO:ここでconfigが設定されていないとまずいので、初期化する必要がありそう(デッキリスト保持しててもなんか消えるし)
-		if (0 == conf.getDealFluc()) {
-			Path path = null;
-			// シャッフルの設定値を読み込み
-			// 設定ファイルのパスを取得
-			try {
-				path = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("conf/config.txt").toURI());
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-			fileservice.loadConfig(path);
+		// いずれの設定値も0を許容しないため、初期化されていない場合はファイルから改めて初期化を行う
+		if (0 == conf.getDealFluc() || 0 == conf.getDealStacks() || 0 == conf.getFaroFluc()
+				|| 0 == conf.getSplitFluc()) {
+			fileservice.loadConfig(confpath);
 		}
 		// 与えた方法でシャッフルを行う
 		shuffleservice.shuffle(decklist, shuffle);
@@ -109,7 +104,7 @@ public class RequesrtParamController {
 		return "result";
 	}
 
-	// TODO:シャッフルをリセットするリクエストを受け取るメソッド追加→htmlにもボタン実装
+	// TODO:シャッフルをリセットするリクエストを受け取るメソッド追加→htmlにもボタン実装(ホーム画面でもいいかも)
 
 	/*
 	 * 設定を行う
@@ -132,18 +127,10 @@ public class RequesrtParamController {
 			System.out.println("入力値がおかしいぞい");
 			return "config";
 		}
-		// 設定ファイルのパスを取得
-		Path path = null;
-		try {
-			path = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("conf/config.txt").toURI());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-
 		// ファイルを書き込み
-		fileservice.writeConfig(path, conf);
+		fileservice.writeConfig(confpath, conf);
 		// 書き込んだ内容をエンティティに保持
-		fileservice.loadConfig(path);
+		fileservice.loadConfig(confpath);
 		// シャッフル画面に表示するmodelを設定
 		model.addAttribute(decklist);
 		// シャッフル画面に戻る

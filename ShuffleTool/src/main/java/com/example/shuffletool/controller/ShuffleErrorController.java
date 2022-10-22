@@ -76,7 +76,7 @@ public class ShuffleErrorController implements ErrorController {/**
 		HttpStatus status = getHttpStatus(req);
 
 		// 出力したい情報をセットする
-		Map<String, Object> body = new HashMap();
+		Map<String, Object> body = new HashMap<String, Object>();
 		body.put("status", status.value());
 		body.put("timestamp", attr.get("timestamp"));
 		body.put("error", attr.get("error"));
