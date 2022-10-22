@@ -26,6 +26,18 @@ public class FileServiceImpl implements FileService {
 	public void loadDeck(Path path) {
 		// デッキリストをファイルから読み込み
 		List<String> list = loadFile(path);
+		// シャッフル度合がわかるよう、それぞれのカードに番号を振る
+		for (int id = 0; id < list.size(); id++) {
+			// 1からリストの順番に番号を名前の前にくっつける
+			// スペースの数は桁に応じて変える(2桁枚を想定)
+			String sp;
+			if (id < 9) {
+				sp = "&nbsp;&nbsp;&nbsp;";
+			} else {
+				sp = "&nbsp;";
+			}
+			list.set(id, (id + 1) + sp + list.get(id));
+		}
 
 		// 読み込んだデッキリストをエンティティに保持
 		decklist.setOriginal(list);
@@ -44,22 +56,22 @@ public class FileServiceImpl implements FileService {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// デッキリストをtextareaの初期値として表示できるようにStringに変換
 	@Override
-	public String deckToString() {
-		// 結果を格納する
+	public String deckToString(Path path) {
+		// builderに結果を格納
 		StringBuilder builder = new StringBuilder();
-		// デッキリストを取得
-		List<String> list = decklist.getOriginal();
-		
+		// デッキリストをファイルから取得
+		List<String> list = loadFile(path);
+
 		// listの要素1つずつに改行文字を挟んで1つの文字列にする
-		for(String s: list) {
+		for (String s : list) {
 			builder.append(s + "&#13;");
 		}
 		// 最後の改行文字は不要なので削除
 		builder.delete(builder.length() - 5, builder.length());
-		
+
 		return builder.toString();
 	}
 
@@ -177,6 +189,6 @@ public class FileServiceImpl implements FileService {
 			e.printStackTrace();
 		}
 		return lines;
-	}	
+	}
 
 }

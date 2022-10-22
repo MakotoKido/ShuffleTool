@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.shuffletool.ShuffleToolApplication;
 import com.example.shuffletool.entity.Config;
 import com.example.shuffletool.entity.DeckList;
+import com.example.shuffletool.entity.ShuffleHistory;
 import com.example.shuffletool.service.FileService;
 import com.example.shuffletool.service.ShuffleService;
 
@@ -28,6 +29,8 @@ public class RequesrtParamController {
 	private DeckList decklist;
 	@Autowired
 	private Config conf;
+	@Autowired
+	private ShuffleHistory history;
 
 	// 各種ファイルのパス
 	// デッキリスト
@@ -59,10 +62,8 @@ public class RequesrtParamController {
 	public String entryView(Model model) {
 		// 各種パスのセットアップ
 		setupPath();
-		// デッキリストを読み込み、エンティティに保持
-		fileservice.loadDeck(deckpath);
 		// 読み込んだデッキリストの改行入りStringを取得、初期値にセット
-		String initial = fileservice.deckToString();
+		String initial = fileservice.deckToString(deckpath);
 		model.addAttribute("deck", initial);
 		// 設定ファイル読み込み
 		fileservice.loadConfig(confpath);
@@ -73,14 +74,15 @@ public class RequesrtParamController {
 	// デッキリストの入力を受け取り、シャッフル画面を表示
 	@PostMapping("entry")
 	public String resultView(@RequestParam String deck, Model model) {
-		// TODO:デッキリスト入力値のバリデーションを検討
+		// TODO:デッキリスト入力値をサニタイズ(番号を振ってスペースを入れる都合上必要)
+		deck = saniImput(deck);
 		// 入力内容をファイルに書き込み
 		fileservice.writeDeck(deck, deckpath);
 		// 書き込んだ内容を読み込み
 		fileservice.loadDeck(deckpath);
-		// シャッフル画面に表示するデッキリストをセット
-		// TODO:formと同様の挙動が作れるなら、addattribute不要説
+		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
 		model.addAttribute(decklist);
+		model.addAttribute(history);
 		return "result";
 	}
 
@@ -97,14 +99,14 @@ public class RequesrtParamController {
 		}
 		// 与えた方法でシャッフルを行う
 		shuffleservice.shuffle(decklist, shuffle);
-		// シャッフル結果を格納
-		model.addAttribute(decklist);
-		// TODO:シャッフル履歴を表示したい
 
+		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		model.addAttribute(decklist);
+		model.addAttribute(history);
 		return "result";
 	}
 
-	// TODO:シャッフルをリセットするリクエストを受け取るメソッド追加→htmlにもボタン実装(ホーム画面でもいいかも)
+	// TODO:シャッフルだけをリセットするリクエストを受け取るメソッド追加→htmlにもボタン実装(ホーム画面でもいいかも)
 
 	/*
 	 * 設定を行う
@@ -119,7 +121,7 @@ public class RequesrtParamController {
 
 	// 画面に入力された設定値を受け取り、ファイルに書き込んでエンティティに保持する
 	@PostMapping("conf")
-	public String setConfig(Model model, @ModelAttribute @Validated Config conf, BindingResult result) {
+	public String setConfig(@ModelAttribute @Validated Config conf, BindingResult result, Model model) {
 		// TODO:ばりでーしょん、なぜか適用されない
 		// 入力チェックされた場合
 		if (result.hasErrors()) {
@@ -131,8 +133,9 @@ public class RequesrtParamController {
 		fileservice.writeConfig(confpath, conf);
 		// 書き込んだ内容をエンティティに保持
 		fileservice.loadConfig(confpath);
-		// シャッフル画面に表示するmodelを設定
+		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
 		model.addAttribute(decklist);
+		model.addAttribute(history);
 		// シャッフル画面に戻る
 		return "result";
 	}
@@ -142,8 +145,17 @@ public class RequesrtParamController {
 	 */
 	@PostMapping("back")
 	public String backEntry(Model model) {
-		// TODO:エラー後なのでいろいろ初期化して初めに戻る
+		// TODO:エラー後なのでいろいろ初期化して初めに戻る…？
 		model.addAttribute(decklist);
-		return "result";
+		return "entry";
 	}
+
+	/*
+	 * ユーティリティメソッド
+	 */
+	// 入力値をサニタイズ
+	private String saniImput(String imp) {
+		return imp.replace("&", "&amp;").replace("\"", "&quot;").replace("<", "&lt;").replace(">", "&gt;");
+	}
+
 }

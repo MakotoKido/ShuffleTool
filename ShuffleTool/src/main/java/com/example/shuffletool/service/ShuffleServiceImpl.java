@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.shuffletool.entity.Config;
 import com.example.shuffletool.entity.DeckList;
+import com.example.shuffletool.entity.ShuffleHistory;
 
 // TODO:設定値が0など、例外処理を必要なところにつける
 // シャッフル関連のメソッドを実装したクラス
@@ -19,6 +20,8 @@ import com.example.shuffletool.entity.DeckList;
 public class ShuffleServiceImpl implements ShuffleService {
 	@Autowired
 	Config conf;
+	@Autowired
+	ShuffleHistory history;
 	// シャッフル方法のキーワード
 	private final String DEAL = "deal"; // ディールシャッフル
 	private final String HINDU = "hindu"; // ヒンズーシャッフル
@@ -30,27 +33,26 @@ public class ShuffleServiceImpl implements ShuffleService {
 		List<String> list;
 		if (decklist.getResult() == null) {
 			// シャッフル処理が初回の場合、読み込んだデッキリストをシャッフル用にコピー
-			// TODO:タイムアウトしたとき用のエラー処理がいるかもしれない
 			list = new ArrayList<String>(decklist.getOriginal());
 		} else {
 			// シャッフル結果がすでに存在している場合、そのシャッフル結果をシャッフルに使用
 			list = decklist.getResult();
 		}
-
+		
 		// 与えられたシャッフル方法に応じてメソッドを呼び出す
 		if (DEAL.equals(shuffle)) {
 			// ディールシャッフルを行う
 			list = dealShuffle(list);
+			addHistory("ディールシャッフル");
 		} else if (HINDU.equals(shuffle)) {
 			// ヒンズーシャッフルを行う
 			list = hinduShuffle(list);
+			addHistory("ヒンズーシャッフル");
 		} else if (FARO.equals(shuffle)) {
 			// ファローシャッフルを行う
 			list = faroShuffle(list);
-		} else {
-			// TODO:定義されていない値が返ってきた場合のエラー処理を定義
+			addHistory("ファローシャッフル");
 		}
-
 		// シャッフル結果を格納
 		decklist.setResult(list);
 	}
@@ -275,6 +277,19 @@ public class ShuffleServiceImpl implements ShuffleService {
 		map.put("top", top);
 		map.put("bottom", bottom);
 		return map;
+	}
+	
+	// 引数をシャッフル履歴にセット
+	private void addHistory(String txt) {
+		// シャッフル履歴が存在するか判定
+		if (history.getHistory() == null) {
+			// シャッフル履歴が存在しない場合、初期化
+			history.setHistory(new ArrayList<String>());
+			history.getHistory().add(txt);
+		} else {
+			// シャッフル履歴が存在している場合、そこに引数を追加
+			history.getHistory().add(txt);
+		}
 	}
 
 }
