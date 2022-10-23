@@ -116,29 +116,34 @@ public class FileServiceImpl implements FileService {
 			// 項目名と設定値を=で切り離す
 			String[] arr = line.split("=");
 			String attrib = arr[0]; // 項目名
-			// TODO:変換時のエラー回避
-			int val = Integer.parseInt(arr[1]); // 設定値をint型に変換
-
-			switch (attrib) {
-			case DSTACK:
-				config.setDealStacks(val);
-				dstackExists = true;
-				break;
-			case DFLUC:
-				config.setDealFluc(val);
-				dflucExists = true;
-				break;
-			case SFLUC:
-				config.setSplitFluc(val);
-				sflucExists = true;
-				break;
-			case FFLUC:
-				config.setFaroFluc(val);
-				fflucExists = true;
-				break;
-			default:
-				// 何もしない
+			try {
+				int val = Integer.parseInt(arr[1]); // 設定値をint型に変換
+				// 変換成功時のみエンティティに設定
+				switch (attrib) {
+				case DSTACK:
+					config.setDealStacks(val);
+					dstackExists = true;
+					break;
+				case DFLUC:
+					config.setDealFluc(val);
+					dflucExists = true;
+					break;
+				case SFLUC:
+					config.setSplitFluc(val);
+					sflucExists = true;
+					break;
+				case FFLUC:
+					config.setFaroFluc(val);
+					fflucExists = true;
+					break;
+				default:
+					// 何もしない
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("数値形式ではありません");
+				e.printStackTrace();
 			}
+
 		}
 
 		// 読み込んだファイルに設定値が存在しない場合、デフォルト値をエンティティに設定

@@ -1,4 +1,4 @@
-&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;
+剣神官ムドラ
 剣神官ムドラ
 剣神官ムドラ
 古衛兵アギド
