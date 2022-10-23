@@ -145,7 +145,7 @@ public class RequesrtParamController {
 	 */
 	@PostMapping("back")
 	public String backEntry(Model model) {
-		// TODO:エラー後なのでいろいろ初期化して初めに戻る…？
+		// TODO:エラーをしっかり分岐させてあげる
 		model.addAttribute(decklist);
 		return "entry";
 	}

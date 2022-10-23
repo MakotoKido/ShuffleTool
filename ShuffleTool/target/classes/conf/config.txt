@@ -1,4 +1,4 @@
-dealstacks=1
-dealfluc=9
-farofluc=300
-splitfluc=200
+dealstacks=3
+dealfluc=20
+farofluc=30
+splitfluc=40
