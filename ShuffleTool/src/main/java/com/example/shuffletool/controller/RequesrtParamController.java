@@ -118,6 +118,8 @@ public class RequesrtParamController {
 		model.addAttribute(conf);
 		return "config";
 	}
+	
+	// TODO:設定値をデフォルトに戻す設定
 
 	// 画面に入力された設定値を受け取り、ファイルに書き込んでエンティティに保持する
 	@PostMapping("conf")

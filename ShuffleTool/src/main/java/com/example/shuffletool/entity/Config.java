@@ -2,7 +2,6 @@ package com.example.shuffletool.entity;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
@@ -22,12 +21,12 @@ public class Config implements Serializable {
 	 */
 	// 作る山の個数
 	@NotNull
-	@Min(3)
-	private int dealStacks;
+	@Range(min=3, max=10)
+	private Integer dealStacks;
 	// 山に配るカードの枚数がブレる確率(単位:%)
 	@NotNull
 	@Range(min=0, max=100)
-	private int dealFluc;
+	private Integer dealFluc;
 	
 	/*
 	 *  ファローシャッフル
@@ -35,7 +34,7 @@ public class Config implements Serializable {
 	// 山を組み合わせる際に、間に挟まるカードが0,2,3枚のいずれかになる確率(単位:%)
 	@NotNull
 	@Range(min=0, max=100)
-	private int faroFluc;
+	private Integer faroFluc;
 	
 	/*
 	 *  ヒンズーシャッフル・ファローシャッフル共通
@@ -43,7 +42,7 @@ public class Config implements Serializable {
 	// 分ける山の枚数が半分からブレる枚数のデッキに対する割合(単位:%)
 	@NotNull
 	@Range(min=0, max=100)
-	private int splitFluc;
+	private Integer splitFluc;
 	
 
 }

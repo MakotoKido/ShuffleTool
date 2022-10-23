@@ -42,18 +42,23 @@
 			<label for="dealstacks" class="col-sm-5 col-form-label">カードを分ける山の個数(3個以上)</label>
 			<div class="col-sm-5">
 				<input type="text" class="form-control" th:field="*{dealStacks}">
-				<ul th:if="${#fields.hasErrors('*')}">
-					<li th:each="error : ${#fields.errors('*')}" th:text="${err}"></li>
-				</ul>
+				<table th:if="${#fields.hasErrors('dealStacks')}"
+					class="text-danger">
+					<tr th:each="err:${#fields.errors('dealStacks')}">
+						<td th:text="${err}"></td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<div class="row mb-3">
 			<label for="dealfluc" class="col-sm-5 col-form-label">山に配るカードの枚数が0,2枚にブレる確率の合計(単位:%)</label>
 			<div class="col-sm-5">
 				<input type="text" class="form-control" th:field="*{dealFluc}">
-				<ul th:if="${#fields.hasErrors('*')}">
-					<li th:each="error : ${#fields.errors('*')}" th:text="${err}"></li>
-				</ul>
+				<table th:if="${#fields.hasErrors('dealFluc')}" class="text-danger">
+					<tr th:each="err:${#fields.errors('dealFluc')}">
+						<td th:text="${err}"></td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<h2>ファローシャッフル</h2>
@@ -61,9 +66,11 @@
 			<label for="farofluc" class="col-sm-5 col-form-label">山を組み合わせる際に、間に挟まるカードの枚数が0,2,3枚にブレる確率の合計(単位:%)</label>
 			<div class="col-sm-5">
 				<input type="text" class="form-control" th:field="*{faroFluc}">
-				<ul th:if="${#fields.hasErrors('*')}">
-					<li th:each="error : ${#fields.errors('*')}" th:text="${err}"></li>
-				</ul>
+				<table th:if="${#fields.hasErrors('faroFluc')}" class="text-danger">
+					<tr th:each="err:${#fields.errors('faroFluc')}">
+						<td th:text="${err}"></td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<h2>ヒンズーシャッフル・ファローシャッフル共通</h2>
@@ -71,12 +78,15 @@
 			<label for="splitfluc" class="col-sm-5 col-form-label">分ける山の枚数が半分からブレる枚数のデッキに対する割合(単位:%)</label>
 			<div class="col-sm-5">
 				<input type="text" class="form-control" th:field="*{splitFluc}">
-				<ul th:if="${#fields.hasErrors('*')}">
-					<li th:each="error : ${#fields.errors('*')}" th:text="${err}"></li>
-				</ul>
+				<table th:if="${#fields.hasErrors('splitFluc')}" class="text-danger">
+					<tr th:each="err:${#fields.errors('splitFluc')}">
+						<td th:text="${err}"></td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<input type="submit" value="更新" class="btn btn-dark">
 	</form>
 
 </body>
+</html>
