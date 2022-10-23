@@ -35,9 +35,9 @@
 	</header>
 
 	<!-- 設定項目を表示・入力 -->
-	<h1>設定</h1>
+	<h1 class="h2">設定</h1>
 	<form th:action="@{/conf}" method="post" th:object="${config}">
-		<h2>ディールシャッフル</h2>
+		<h2 class="h3">ディールシャッフル</h2>
 		<div class="row mb-3">
 			<label for="dealstacks" class="col-sm-5 col-form-label">カードを分ける山の個数(3個以上)</label>
 			<div class="col-sm-5">
@@ -61,7 +61,7 @@
 				</table>
 			</div>
 		</div>
-		<h2>ファローシャッフル</h2>
+		<h2 class="h3">ファローシャッフル</h2>
 		<div class="row mb-3">
 			<label for="farofluc" class="col-sm-5 col-form-label">山を組み合わせる際に、間に挟まるカードの枚数が0,2,3枚にブレる確率の合計(単位:%)</label>
 			<div class="col-sm-5">
@@ -73,7 +73,7 @@
 				</table>
 			</div>
 		</div>
-		<h2>ヒンズーシャッフル・ファローシャッフル共通</h2>
+		<h2 class="h3">ヒンズーシャッフル・ファローシャッフル共通</h2>
 		<div class="row mb-3">
 			<label for="splitfluc" class="col-sm-5 col-form-label">分ける山の枚数が半分からブレる枚数のデッキに対する割合(単位:%)</label>
 			<div class="col-sm-5">

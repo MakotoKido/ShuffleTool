@@ -34,22 +34,14 @@
 		</nav>
 	</header>
 
-	<!-- 入力エリア -->
-	<div class="container">
-		<!-- 左側スペース -->
-		<div class="col"></div>
-		<!-- デッキリストの入力 -->
-		<div class="col">
-			<h1>デッキリストを入力</h1>
-			<p>カード1枚につき1行で入力してください。</p>
-			<form th:action="@{/entry}" method="post">
-				<textarea rows="40" cols="80" name="deck" th:utext="${deck}"></textarea>
-				<div>
-					<input type="submit" value="登録" class="btn btn-dark">
-				</div>
-			</form>
+	<!-- デッキリストの入力 -->
+	<h1>デッキリストを入力</h1>
+	<p>カード1枚につき1行で入力してください。</p>
+	<form th:action="@{/entry}" method="post">
+		<div>
+			<input type="submit" value="登録" class="btn btn-dark">
 		</div>
-		<!-- 右側スペース -->
-		<div class="col"></div>
-	</div>
+		<textarea rows="30" cols="80" name="deck" th:utext="${deck}"></textarea>
+	</form>
+
 </body>

@@ -34,23 +34,13 @@
 		</nav>
 	</header>
 
-	<!-- 画面を縦に3分割 -->
+	<!-- 画面を縦に4分割 -->
 	<div class="container">
 		<div class="row">
 
-			<!-- 読み込んだデッキリストを表示 -->
-			<div class="col">
-				<h1>デッキリスト</h1>
-				<table>
-					<tr th:each="cards : ${deckList.original}">
-						<td th:utext="${cards}"></td>
-					</tr>
-				</table>
-			</div>
-
-			<div class="col">
+			<div class="col-6 col-md-3">
 				<!-- シャッフル方法を選択 -->
-				<h1>シャッフル方法を選択</h1>
+				<h1 class="h2">シャッフル方法を選択</h1>
 				<form th:action="@{/result}" method="post">
 					<p>
 						<input type="radio" id="deal" name="shuffle" value="deal">
@@ -66,13 +56,16 @@
 					</p>
 					<!-- 誤操作とエラー防止用に、デフォルト値は関係ないもので設定しておく -->
 					<p>
-						<input type="radio" id="none" name="shuffle" value="none" hidden="true" checked>
+						<input type="radio" id="none" name="shuffle" value="none"
+							hidden="true" checked>
 					</p>
 					<input type="submit" value="シャッフル" class="btn btn-dark">
 				</form>
-				<p></p>
+			</div>
+
+			<div class="col-6 col-md-3">
 				<!-- シャッフル履歴を表示 -->
-				<h1>シャッフル履歴</h1>
+				<h1 class="h2">シャッフル履歴</h1>
 				<ol>
 					<li th:each="history : ${shuffleHistory.history}">
 						<!-- 履歴の内容 --> <span th:text="${history}"></span>
@@ -80,16 +73,26 @@
 				</ol>
 			</div>
 
+			<!-- 読み込んだデッキリストを表示 -->
+			<div class="col-6 col-md-3">
+				<h1 class="h2">デッキリスト</h1>
+				<table>
+					<tr th:each="cards : ${deckList.original}">
+						<td th:utext="${cards}"></td>
+					</tr>
+				</table>
+			</div>
+
 			<!-- シャッフル結果を表示 -->
-			<div class="col">
-				<h1>シャッフル結果</h1>
+			<div class="col-6 col-md-3">
+				<h1 class="h2">シャッフル結果</h1>
 				<table>
 					<tr th:each="cards : ${deckList.result}">
 						<td th:utext="${cards}"></td>
 					</tr>
 				</table>
 			</div>
-
+			
 		</div>
 	</div>
 
