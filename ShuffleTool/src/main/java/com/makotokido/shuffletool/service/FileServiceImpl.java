@@ -161,6 +161,7 @@ public class FileServiceImpl implements FileService {
 		}
 	}
 
+	// 設定値をファイルに書き込む
 	@Override
 	public void writeConfig(Path path, Config config) {
 		// 書き込めるように入力値を作成してlinesに格納
@@ -177,6 +178,24 @@ public class FileServiceImpl implements FileService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	// 設定値をデフォルトに戻す
+	@Override
+	public void setDefault(Path path) {
+		// 設定値のファイルが空白の場合、設定値がデフォルトになるのを利用
+		// ファイルを空白に設定
+		try {
+			Files.write(path, new ArrayList<String>(), StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// デフォルトの設定値を読み込み
+		loadConfig(path);
+		// 設定値をファイルに書き込み
+		writeConfig(path, config);
+		
 	}
 
 	/*

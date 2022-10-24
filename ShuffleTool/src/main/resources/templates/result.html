@@ -61,6 +61,10 @@
 					</p>
 					<input type="submit" value="シャッフル" class="btn btn-dark">
 				</form>
+				<p></p>
+				<form th:action="@{/reset}" method="post">
+					<input type="submit" value="初めからシャッフル" class="btn btn-danger">
+				</form>
 			</div>
 
 			<div class="col-6 col-md-3">
@@ -92,7 +96,7 @@
 					</tr>
 				</table>
 			</div>
-			
+
 		</div>
 	</div>
 

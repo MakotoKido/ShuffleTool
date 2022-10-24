@@ -75,6 +75,7 @@ public class RequesrtParamController {
 	// デッキリストの入力を受け取り、シャッフル画面を表示
 	@PostMapping("entry")
 	public String resultView(@RequestParam String deck, Model model) {
+		// デッキが空の場合、再入力		
 		if(deck.equals("")) {
 			return "entry";
 		}
@@ -110,7 +111,17 @@ public class RequesrtParamController {
 		return "result";
 	}
 
-	// TODO:シャッフルだけをリセットするリクエストを受け取るメソッド追加→htmlにもボタン実装(ホーム画面でもいいかも)
+	// シャッフル状態をリセット
+	@PostMapping("reset")
+	public String resetShuffle(Model model) {
+		// シャッフル結果・履歴を削除
+		decklist.setResult(null);
+		history.setHistory(null);
+		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		model.addAttribute(decklist);
+		model.addAttribute(history);
+		return "result";
+	}
 
 	/*
 	 * 設定を行う
@@ -123,7 +134,16 @@ public class RequesrtParamController {
 		return "config";
 	}
 	
-	// TODO:設定値をデフォルトに戻す設定
+	// 設定値をデフォルトに戻す
+	@PostMapping("default")
+	public String setDefault(Model model) {
+		// 設定値をデフォルトに戻す
+		fileservice.setDefault(confpath);
+		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		model.addAttribute(decklist);
+		model.addAttribute(history);
+		return "result";
+	}
 
 	// 画面に入力された設定値を受け取り、ファイルに書き込んでエンティティに保持する
 	@PostMapping("conf")
@@ -131,7 +151,6 @@ public class RequesrtParamController {
 		// 入力チェックされた場合
 		if (result.hasErrors()) {
 			// 設定画面に戻る
-			System.out.println("入力値がおかしいぞい");
 			return "config";
 		}
 		// ファイルを書き込み

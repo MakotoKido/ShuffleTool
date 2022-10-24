@@ -21,4 +21,6 @@ public interface FileService {
 	// 入力された設定値を読み込み、ファイルに書き込んでエンティティに保持するメソッド
 	public void writeConfig(Path path, Config config);
 
+	// 設定値をデフォルトに戻す
+	public void setDefault(Path path);
 }
