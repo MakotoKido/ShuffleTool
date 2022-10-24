@@ -1,4 +1,4 @@
-package com.example.shuffletool.entity;
+package com.makotokido.shuffletool.entity;
 
 import java.io.Serializable;
 import java.util.List;

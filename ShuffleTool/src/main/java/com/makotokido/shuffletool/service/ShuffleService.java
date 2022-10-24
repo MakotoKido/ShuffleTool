@@ -1,6 +1,6 @@
-package com.example.shuffletool.service;
+package com.makotokido.shuffletool.service;
 
-import com.example.shuffletool.entity.DeckList;
+import com.makotokido.shuffletool.entity.DeckList;
 
 // シャッフルに関連するメソッドを集めたサービスクラス
 public interface ShuffleService {

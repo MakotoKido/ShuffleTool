@@ -1,4 +1,4 @@
 dealstacks=7
 dealfluc=5
-farofluc=20
 splitfluc=13
+farofluc=20

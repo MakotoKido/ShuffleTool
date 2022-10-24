@@ -1,4 +1,4 @@
-package com.example.shuffletool.controller;
+package com.makotokido.shuffletool.controller;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.example.shuffletool.ShuffleToolApplication;
-import com.example.shuffletool.entity.Config;
-import com.example.shuffletool.entity.DeckList;
-import com.example.shuffletool.entity.ShuffleHistory;
-import com.example.shuffletool.service.FileService;
-import com.example.shuffletool.service.ShuffleService;
+
+import com.makotokido.shuffletool.ShuffleToolApplication;
+import com.makotokido.shuffletool.entity.Config;
+import com.makotokido.shuffletool.entity.DeckList;
+import com.makotokido.shuffletool.entity.ShuffleHistory;
+import com.makotokido.shuffletool.service.FileService;
+import com.makotokido.shuffletool.service.ShuffleService;
 
 @Controller
 public class RequesrtParamController {
@@ -74,7 +75,10 @@ public class RequesrtParamController {
 	// デッキリストの入力を受け取り、シャッフル画面を表示
 	@PostMapping("entry")
 	public String resultView(@RequestParam String deck, Model model) {
-		// TODO:デッキリスト入力値をサニタイズ(番号を振ってスペースを入れる都合上必要)
+		if(deck.equals("")) {
+			return "entry";
+		}
+		// デッキリスト入力値をサニタイズ(番号を振ってスペースを入れる都合上必要)
 		deck = saniImput(deck);
 		// 入力内容をファイルに書き込み
 		fileservice.writeDeck(deck, deckpath);
@@ -124,7 +128,6 @@ public class RequesrtParamController {
 	// 画面に入力された設定値を受け取り、ファイルに書き込んでエンティティに保持する
 	@PostMapping("conf")
 	public String setConfig(@ModelAttribute @Validated Config conf, BindingResult result, Model model) {
-		// TODO:ばりでーしょん、なぜか適用されない
 		// 入力チェックされた場合
 		if (result.hasErrors()) {
 			// 設定画面に戻る

@@ -1,4 +1,4 @@
-package com.example.shuffletool.controller;
+package com.makotokido.shuffletool.controller;
 
 import java.util.Date;
 import java.util.HashMap;

@@ -1,8 +1,8 @@
-package com.example.shuffletool.service;
+package com.makotokido.shuffletool.service;
 
 import java.nio.file.Path;
 
-import com.example.shuffletool.entity.Config;
+import com.makotokido.shuffletool.entity.Config;
 
 // デッキリストと設定値のファイル読み書きを担当するサービスクラス
 public interface FileService {

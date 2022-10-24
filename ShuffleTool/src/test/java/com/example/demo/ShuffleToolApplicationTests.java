@@ -3,7 +3,7 @@ package com.example.demo;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.boot.test.context.SpringBootTest;
 //
-//import com.example.shuffletool.ShuffleToolApplication;
+//import com.makotokido.shuffletool.ShuffleToolApplication;
 //
 //@ExtendWith(SpringExtension.class)
 //@SpringBootTest(classes = ShuffleToolApplication.class)

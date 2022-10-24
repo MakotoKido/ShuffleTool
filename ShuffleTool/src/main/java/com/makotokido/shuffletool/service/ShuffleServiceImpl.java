@@ -1,4 +1,4 @@
-package com.example.shuffletool.service;
+package com.makotokido.shuffletool.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,9 +10,9 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.shuffletool.entity.Config;
-import com.example.shuffletool.entity.DeckList;
-import com.example.shuffletool.entity.ShuffleHistory;
+import com.makotokido.shuffletool.entity.Config;
+import com.makotokido.shuffletool.entity.DeckList;
+import com.makotokido.shuffletool.entity.ShuffleHistory;
 
 // TODO:設定値が0など、例外処理を必要なところにつける
 // シャッフル関連のメソッドを実装したクラス

@@ -1,4 +1,4 @@
-package com.example.shuffletool.service;
+package com.makotokido.shuffletool.service;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,8 +10,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.shuffletool.entity.Config;
-import com.example.shuffletool.entity.DeckList;
+import com.makotokido.shuffletool.entity.Config;
+import com.makotokido.shuffletool.entity.DeckList;
 
 // ファイルの読み書きを行うサービスクラス
 @Service
