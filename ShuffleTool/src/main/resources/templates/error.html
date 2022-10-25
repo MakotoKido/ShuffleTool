@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 設定値を表示、変更を入力するページ -->
+<!-- エラー時に表示するページ -->
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -17,33 +17,19 @@
 <body>
 	<header>
 		<!-- Navbar -->
+		<!-- エラー時の画面なので不要なリンクはしない -->
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="entry">シャッフルツール</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#navbarSupportedContent"
-				aria-controls="navbarSupportedContent" aria-expanded="false"
-				aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav mr-auto">
-					<li class="nav-item">
-						<a class="nav-link" href="/conf">設定</a>
-					</li>
-				</ul>
-			</div>
+			<div class="navbar-brand">シャッフルツール</div>
 		</nav>
 	</header>
-	
+
 	<!-- エラー内容を表示 -->
-	<h1 th:text="${status}"></h1>
-	<p th:text="${message}"></p>
-	<p th:text="${path}"></p>
-	<p th:text="${timestamp}"></p>
- 
-	<form method="post" th:action="@{/back}">
-	<button class="btn btn-dark" type="submit">デッキ入力に戻る</button>
-	</form>
+	<h1>エラーが発生しました</h1>
+	<p th:text="${exception}"></p>
+	<a href="/back">
+		<button type="button" class="btn btn-dark">>デッキ入力に戻る</button>
+	</a>
+
 
 </body>
+</html>

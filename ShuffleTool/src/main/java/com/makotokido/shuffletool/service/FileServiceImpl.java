@@ -52,7 +52,6 @@ public class FileServiceImpl implements FileService {
 		try {
 			Files.write(path, line, StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -175,7 +174,6 @@ public class FileServiceImpl implements FileService {
 		try {
 			Files.write(path, lines, StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -188,7 +186,6 @@ public class FileServiceImpl implements FileService {
 		try {
 			Files.write(path, new ArrayList<String>(), StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// デフォルトの設定値を読み込み
@@ -208,8 +205,6 @@ public class FileServiceImpl implements FileService {
 		try {
 			lines = Files.readAllLines(path);
 		} catch (IOException e) {
-			// TODO:読み込み失敗時の処理
-			System.out.println("ファイルの読み込みに失敗しました");
 			e.printStackTrace();
 		}
 		return lines;

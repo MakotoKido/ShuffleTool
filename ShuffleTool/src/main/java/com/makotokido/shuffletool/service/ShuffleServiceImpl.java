@@ -237,7 +237,6 @@ public class ShuffleServiceImpl implements ShuffleService {
 			list = new ArrayList<String>(result);
 		} else {
 			// 与えられた配列とリストの大きさが一致しない場合、処理を行わない
-			// TODO:エラー時の処理を定義
 		}
 		return list;
 	}

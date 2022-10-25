@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,10 +46,6 @@ public class RequesrtParamController {
 			deckpath = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("deck/decklist.txt").toURI());
 			confpath = Path.of(ShuffleToolApplication.class.getClassLoader().getResource("conf/config.txt").toURI());
 		} catch (URISyntaxException e) {
-			// TODO:エラー時の処理
-			e.printStackTrace();
-		} catch (Exception e) {
-			// 予期せぬエラー
 			e.printStackTrace();
 		}
 	}
@@ -106,9 +103,17 @@ public class RequesrtParamController {
 		addAttribs(model);
 		return "result";
 	}
+	
+	// 設定画面から直接シャッフル画面に戻る場合
+	@GetMapping("result")
+	public String resultView(Model model) {
+		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		addAttribs(model);
+		return "result";
+	}
 
 	// シャッフル状態をリセット
-	@PostMapping("reset")
+	@GetMapping("reset")
 	public String resetShuffle(Model model) {
 		// シャッフル結果・履歴を削除
 		initShuffle();
@@ -129,7 +134,7 @@ public class RequesrtParamController {
 	}
 
 	// 設定値をデフォルトに戻す
-	@PostMapping("default")
+	@GetMapping("default")
 	public String setDefault(Model model) {
 		// 設定値をデフォルトに戻す
 		fileservice.setDefault(confpath);
@@ -159,13 +164,23 @@ public class RequesrtParamController {
 		// シャッフル画面に戻る
 		return "result";
 	}
+	
+	/*
+	 * エラー画面に遷移
+	 */
+	@ExceptionHandler(Exception.class)
+	public String exceptionHandler(Exception e, Model model) {
+		// Exceptionの種類を示すメッセージを追加
+		model.addAttribute("exception", e.getClass().getName() + ":" + e.getMessage());
+		return "error";
+	}
 
 	/*
 	 * エラー画面からデッキ入力画面に戻る
 	 */
-	@PostMapping("back")
+	@GetMapping("back")
 	public String backEntry(Model model) {
-		// TODO:エラーをしっかり分岐させてあげる(?)
+		// 設定・デッキの状態を初期化
 		initAll();
 		// ファイルに保持しているデッキリストの改行入りStringを取得、初期値にセット
 		String initial = fileservice.deckToString(deckpath);
@@ -183,6 +198,8 @@ public class RequesrtParamController {
 
 	// 各種値を初期化
 	private void initAll() {
+		// ファイルパスを初期化
+		setupPath();
 		// シャッフル履歴を初期化
 		initShuffle();
 		// デッキ・設定を再読み込み
@@ -201,5 +218,8 @@ public class RequesrtParamController {
 		decklist.setResult(null);
 		history.setHistory(null);
 	}
+	
+	// TODO:シャッフル方法のヘルプをresultに
+	// TODO:設定値をresultに設定
 
 }
