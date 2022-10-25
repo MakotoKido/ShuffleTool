@@ -14,7 +14,6 @@ import com.makotokido.shuffletool.entity.Config;
 import com.makotokido.shuffletool.entity.DeckList;
 import com.makotokido.shuffletool.entity.ShuffleHistory;
 
-// TODO:設定値が0など、例外処理を必要なところにつける
 // シャッフル関連のメソッドを実装したクラス
 @Service
 public class ShuffleServiceImpl implements ShuffleService {
@@ -38,7 +37,7 @@ public class ShuffleServiceImpl implements ShuffleService {
 			// シャッフル結果がすでに存在している場合、そのシャッフル結果をシャッフルに使用
 			list = decklist.getResult();
 		}
-		
+
 		// 与えられたシャッフル方法に応じてメソッドを呼び出す
 		if (DEAL.equals(shuffle)) {
 			// ディールシャッフルを行う
@@ -60,46 +59,49 @@ public class ShuffleServiceImpl implements ShuffleService {
 	/*
 	 * シャッフルメソッド
 	 */
-
+	// ディールシャッフルを行う
 	private List<String> dealShuffle(List<String> list) {
-		// 設定された個数(デフォルト7個)山を作り、その上にデッキから0-2枚ずつ(標準1枚、設定した確率(デフォルト5%)で0枚か2枚になる)乗せ、並べた順に山をまとめる
+		/*
+		 *  設定された個数の山に、デッキから0-2枚ずつ(標準1枚、設定した確率で0枚か2枚になる)乗せ、並べた順に山をまとめる
+		 */
 		// 設定値を取得
 		int stacks = conf.getDealStacks(); // 作る山の個数
-		int fluc = conf.getDealFluc(); // 枚数のぶれる確率(単位:%)
+		int fluc = conf.getDealFluc(); // 枚数がぶれる確率(単位:%)
 
 		// 分けた山に割り振られたカードのインデックスを保持するmapを定義
 		// 山ごとの正確な枚数が予測できないため、一旦結果をStringBuilderに格納する(,を区切り文字とする)
-		Map<Integer, StringBuilder> map = new HashMap<Integer, StringBuilder>();
-		for (int i = 0; i < stacks; i++) {
-			map.put(i, new StringBuilder());
+		Map<Integer, StringBuilder> stk = new HashMap<Integer, StringBuilder>();
+		for (int i = 0; i < stacks && i < list.size(); i++) {
+			// 山の個数がデッキ枚数より多く設定されている場合は山の個数はデッキ枚数と同じにする
+			stk.put(i, new StringBuilder());
 		}
 
-		// デッキの上から1枚ずつ、それぞれの山に定義したMapにインデックス番号を格納する
-		// 人力でシャッフルする際と同じく、デッキの上にあったカードほど出来上がった山の下に配置する
+		/*
+		 *  デッキの上から1枚ずつ、それぞれの山に定義したMapにインデックス番号を格納する
+		 *  人力でシャッフルする際と同じく、デッキの上にあったカードほど山の下になるよう配置する
+		 */
 		for (int j = 0; j < list.size();) {
-			for (int i = 0; i < stacks; i++) {
-				// デッキの個数と山の個数によってはデッキの枚数以上にカードを取ってしまうので再度チェック
-				if (j < list.size()) {
-					StringBuilder index = map.get(i);
-					// カードを割り振る枚数を乱数で決定
-					// 乱数がブレの数値未満かつブレの数値の半分(小数点以下切り捨て)以上の場合2枚、それより小さい場合は1枚も取らない
-					int rand = new Random().nextInt(100);
-					// 割り振る枚数
-					int take = 0;
-					if (rand >= fluc) {
-						take = 1; // 1枚割り振る
-					} else if (rand >= fluc / 2 && rand < fluc) {
-						take = 2; // 2枚割り振る
-					} else {
-						// 0枚割り振る
-					}
-					// カードを割り振る
-					for (int k = 0; k < take; k++) {
-						// 1枚目がデッキの最後の場合、2枚目でカードを追加しないようチェック
-						if (j < list.size()) {
-							index.insert(0, j + ",");
-							j++;
-						}
+			for (int i = 0; i < stk.size(); i++) {
+				StringBuilder index = stk.get(i);
+				// カードを割り振る枚数を乱数で決定
+				int rand = new Random().nextInt(100);
+				// 割り振る枚数
+				int take = 0;
+				if (rand >= fluc) {
+					// 乱数がfluc以上の場合1枚とる
+					take = 1;
+				} else if (rand >= fluc / 2 && rand < fluc) {
+					// 乱数がfluc未満かつflucの半分(小数点以下切り捨て)以上の場合2枚
+					take = 2;
+				} else {
+					// 乱数がflucの半分未満の場合は1枚も取らない
+				}
+				// カードを割り振る
+				for (int k = 0; k < take; k++) {
+					// カードを配った枚数がデッキの枚数を超えないようにチェック
+					if (j < list.size()) {
+						index.insert(0, j + ",");
+						j++;
 					}
 				}
 			}
@@ -107,10 +109,13 @@ public class ShuffleServiceImpl implements ShuffleService {
 
 		// 出来上がった配列を組み合わせる
 		int[] order = new int[0];
-		for (int i = 0; i < map.size(); i++) {
-			String[] str = map.get(i).toString().split(",");
-			int[] arr = Stream.of(str).mapToInt(Integer::parseInt).toArray();
-			order = concatArray(order, arr);
+		for (int i = 0; i < stk.size(); i++) {
+			String[] str = stk.get(i).toString().split(",");
+			if (!"".equals(str[0])) {
+				// 空文字の配列は処理しない
+				int[] arr = Stream.of(str).mapToInt(Integer::parseInt).toArray();
+				order = concatArray(order, arr);
+			}
 		}
 
 		// 作成した配列の通りに山札の並びを変える
@@ -118,8 +123,11 @@ public class ShuffleServiceImpl implements ShuffleService {
 		return list;
 	}
 
+	// ヒンズーシャッフルを行う
 	private List<String> hinduShuffle(List<String> list) {
-		// デッキの下から、デッキの枚数の半分±設定値(デフォルトはデッキの13%)以内のランダムの枚数を取り、デッキの上に乗せる
+		/*
+		 *  デッキの下から、デッキの枚数の半分±設定値(デフォルトはデッキの13%)以内のランダムの枚数を取り、デッキの上に乗せる
+		 */
 		// 設定値を取得
 		int flucrate = conf.getSplitFluc(); // 取る山の枚数がちょうど半分からブレる割合(単位:%)
 		// デッキの枚数
@@ -138,13 +146,16 @@ public class ShuffleServiceImpl implements ShuffleService {
 		return list;
 	}
 
+	// ファローシャッフルを行う
 	private List<String> faroShuffle(List<String> list) {
-		// デッキの下から、デッキの枚数の半分±設定値(デフォルトはデッキの13%)以内のランダムの枚数を取り、できた2つの山のカードを互いに間に挟み込むようにして組み合わせる。
-		// 間に挟まるカードの枚数は標準1枚、設定した確率で0,2,3枚挟まる
+		/*
+		 *  デッキの下から、デッキの枚数の半分±設定値(デフォルトはデッキの13%)以内のランダムの枚数を取り、できた2つの山のカードを互いに間に挟み込むようにして組み合わせる。
+		 *  間に挟まるカードの枚数は標準1枚、設定した確率で2,3枚挟まる
+		 */
 
 		// 設定値を取得
 		int sFluc = conf.getSplitFluc(); // 取る山の枚数がちょうど半分からブレる割合(単位:%)
-		int fFluc = conf.getFaroFluc(); // 山を組み合わせる際に、間に挟まるカードが0,2,3枚のいずれかになる確率(単位:%)
+		int fFluc = conf.getFaroFluc(); // 山を組み合わせる際に、間に挟まるカードが2,3枚のいずれかになる確率(単位:%)
 		// デッキの枚数
 		int count = list.size();
 
@@ -174,15 +185,17 @@ public class ShuffleServiceImpl implements ShuffleService {
 			// 重ねる枚数を決める
 			rand = new Random().nextInt(100);
 			int take = 0;
-			// TODO:説明
 			if (rand >= fFluc) {
+				// 乱数がfFluc以上の場合、重ねるカードは1枚
 				take = 1;
-			} else if (rand < fFluc && rand >= fFluc * 2 / 3) {
+			} else if (rand < fFluc && rand >= fFluc / 2) {
+				// 乱数がfFluc未満かつfFlucの半分以上の場合、重ねるカードは3枚
 				take = 3;
-			} else if (rand < fFluc && rand >= fFluc * 2 / 3) {
+			} else {
+				// 乱数がfFlucの半分未満の場合、重ねるカードは2枚
 				take = 2;
 			}
-
+			// 決定した枚数カードを重ねる
 			for (int i = 0; i < take; i++) {
 				if (fromTop) {
 					if (t < top.length) {
@@ -198,6 +211,7 @@ public class ShuffleServiceImpl implements ShuffleService {
 					}
 				}
 			}
+			// 上下の処理を次回は処理していないほうから行う
 			fromTop = !fromTop;
 		}
 
@@ -209,15 +223,12 @@ public class ShuffleServiceImpl implements ShuffleService {
 	/*
 	 * 共通ユーティリティメソッド
 	 */
-
-	// 配列2つとリストを与え、配列2つを1→2の順に組み合わせた順番にリストを並べ替えて返す
+	// リストとその要素のインデックスを並べ替えた配列を与え、配列に記されたインデックスの順番に並べ替えたリストを返す
 	private List<String> sortList(List<String> list, int[] arr) {
-		// 与えられた配列とリストの大きさが一致するか確認
+		// 与えられた配列とリストの大きさが一致するかチェック
 		if (arr.length == list.size()) {
-			// 並べ替えを行う
 			// 並べ替え結果を格納するList
 			List<String> result = new ArrayList<String>();
-
 			for (int i : arr) {
 				// 与えられたListのi番目の要素を追加していく
 				result.add(list.get(i));
@@ -225,8 +236,7 @@ public class ShuffleServiceImpl implements ShuffleService {
 			// 結果をlistに上書き
 			list = new ArrayList<String>(result);
 		} else {
-			// 並べ替えを行わない
-			System.out.println("error in size");
+			// 与えられた配列とリストの大きさが一致しない場合、処理を行わない
 			// TODO:エラー時の処理を定義
 		}
 		return list;
@@ -250,8 +260,10 @@ public class ShuffleServiceImpl implements ShuffleService {
 		return result;
 	}
 
-	// デッキを2つに分け、上側と下側のデッキの並びをmap(keyはtop, bottom)で返す
-	// count デッキの枚数, flucrate 取る山の枚数がちょうど半分からブレる割合(単位:%)
+	/*
+	 *  デッキを2つに分け、上側と下側のデッキの並びをmap(keyはtop, bottom)で返す
+	 *  count デッキの枚数, flucrate 取る山の枚数がちょうど半分からブレる割合(単位:%)
+	 */
 	private Map<String, int[]> splitDeck(int count, int flucrate) {
 		// デッキからとる枚数のブレの最大値(小数点以下切り捨て）
 		int fluc = count * flucrate / 100;
@@ -278,7 +290,7 @@ public class ShuffleServiceImpl implements ShuffleService {
 		map.put("bottom", bottom);
 		return map;
 	}
-	
+
 	// 引数をシャッフル履歴にセット
 	private void addHistory(String txt) {
 		// シャッフル履歴が存在するか判定

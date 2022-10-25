@@ -53,8 +53,6 @@ public class RequesrtParamController {
 		}
 	}
 
-	// TODO:初期化メソッドが欲しい、あとタイミング
-
 	/*
 	 * 最初に表示するページを取得 デッキリストの入力を行う
 	 */
@@ -75,8 +73,9 @@ public class RequesrtParamController {
 	// デッキリストの入力を受け取り、シャッフル画面を表示
 	@PostMapping("entry")
 	public String resultView(@RequestParam String deck, Model model) {
-		// デッキが空の場合、再入力		
-		if(deck.equals("")) {
+		// デッキが空の場合、再入力
+		if (deck.equals("")) {
+			model.addAttribute("warning", "デッキリストを入力してください。");
 			return "entry";
 		}
 		// デッキリスト入力値をサニタイズ(番号を振ってスペースを入れる都合上必要)
@@ -86,8 +85,7 @@ public class RequesrtParamController {
 		// 書き込んだ内容を読み込み
 		fileservice.loadDeck(deckpath);
 		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
-		model.addAttribute(decklist);
-		model.addAttribute(history);
+		addAttribs(model);
 		return "result";
 	}
 
@@ -104,10 +102,8 @@ public class RequesrtParamController {
 		}
 		// 与えた方法でシャッフルを行う
 		shuffleservice.shuffle(decklist, shuffle);
-
 		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
-		model.addAttribute(decklist);
-		model.addAttribute(history);
+		addAttribs(model);
 		return "result";
 	}
 
@@ -115,11 +111,9 @@ public class RequesrtParamController {
 	@PostMapping("reset")
 	public String resetShuffle(Model model) {
 		// シャッフル結果・履歴を削除
-		decklist.setResult(null);
-		history.setHistory(null);
+		initShuffle();
 		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
-		model.addAttribute(decklist);
-		model.addAttribute(history);
+		addAttribs(model);
 		return "result";
 	}
 
@@ -133,15 +127,16 @@ public class RequesrtParamController {
 		model.addAttribute(conf);
 		return "config";
 	}
-	
+
 	// 設定値をデフォルトに戻す
 	@PostMapping("default")
 	public String setDefault(Model model) {
 		// 設定値をデフォルトに戻す
 		fileservice.setDefault(confpath);
+		// シャッフル結果・履歴を削除
+		initShuffle();
 		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
-		model.addAttribute(decklist);
-		model.addAttribute(history);
+		addAttribs(model);
 		return "result";
 	}
 
@@ -157,20 +152,24 @@ public class RequesrtParamController {
 		fileservice.writeConfig(confpath, conf);
 		// 書き込んだ内容をエンティティに保持
 		fileservice.loadConfig(confpath);
+		// シャッフル結果・履歴を削除
+		initShuffle();
 		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
-		model.addAttribute(decklist);
-		model.addAttribute(history);
+		addAttribs(model);
 		// シャッフル画面に戻る
 		return "result";
 	}
 
 	/*
-	 * エラー画面から戻る
+	 * エラー画面からデッキ入力画面に戻る
 	 */
 	@PostMapping("back")
 	public String backEntry(Model model) {
-		// TODO:エラーをしっかり分岐させてあげる
-		model.addAttribute(decklist);
+		// TODO:エラーをしっかり分岐させてあげる(?)
+		initAll();
+		// ファイルに保持しているデッキリストの改行入りStringを取得、初期値にセット
+		String initial = fileservice.deckToString(deckpath);
+		model.addAttribute("deck", initial);
 		return "entry";
 	}
 
@@ -180,6 +179,27 @@ public class RequesrtParamController {
 	// 入力値をサニタイズ
 	private String saniImput(String imp) {
 		return imp.replace("&", "&amp;").replace("\"", "&quot;").replace("<", "&lt;").replace(">", "&gt;");
+	}
+
+	// 各種値を初期化
+	private void initAll() {
+		// シャッフル履歴を初期化
+		initShuffle();
+		// デッキ・設定を再読み込み
+		fileservice.loadDeck(deckpath);
+		fileservice.loadConfig(confpath);
+	}
+
+	// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+	private void addAttribs(Model model) {
+		model.addAttribute(decklist);
+		model.addAttribute(history);
+	}
+
+	// シャッフル結果・履歴を削除(初期化)
+	private void initShuffle() {
+		decklist.setResult(null);
+		history.setHistory(null);
 	}
 
 }

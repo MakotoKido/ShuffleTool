@@ -8,7 +8,6 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import lombok.Data;
 
-// TODO:デッキリストのバリデーション？？(notnullはつけた方がいいかも)
 @Component
 @Data
 @SessionScope
