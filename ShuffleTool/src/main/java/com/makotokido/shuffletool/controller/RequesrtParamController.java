@@ -103,7 +103,7 @@ public class RequesrtParamController {
 		addAttribs(model);
 		return "result";
 	}
-	
+
 	// 設定画面から直接シャッフル画面に戻る場合
 	@GetMapping("result")
 	public String resultView(Model model) {
@@ -164,7 +164,7 @@ public class RequesrtParamController {
 		// シャッフル画面に戻る
 		return "result";
 	}
-	
+
 	/*
 	 * エラー画面に遷移
 	 */
@@ -211,6 +211,7 @@ public class RequesrtParamController {
 	private void addAttribs(Model model) {
 		model.addAttribute(decklist);
 		model.addAttribute(history);
+		model.addAttribute(conf);
 	}
 
 	// シャッフル結果・履歴を削除(初期化)
@@ -218,8 +219,7 @@ public class RequesrtParamController {
 		decklist.setResult(null);
 		history.setHistory(null);
 	}
-	
+
 	// TODO:シャッフル方法のヘルプをresultに
-	// TODO:設定値をresultに設定
 
 }

@@ -4,6 +4,7 @@
 
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>シャッフル</title>
 
 <!-- Bootstrap -->
@@ -12,25 +13,28 @@
 	rel="stylesheet"
 	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
 	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 </head>
 
 <body>
 	<header>
 		<!-- Navbar -->
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<div class="navbar-brand">シャッフルツール</div>
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#navbarSupportedContent"
-				aria-controls="navbarSupportedContent" aria-expanded="false"
-				aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav mr-auto">
-					<li class="nav-item"><a class="nav-link" href="/conf">設定</a></li>
-					<li class="nav-item"><a class="nav-link" href="/entry">デッキ入力に戻る</a></li>
-				</ul>
+			<div class="container-fluid">
+				<div class="navbar-brand">シャッフルツール</div>
+				<!-- ハンバーガーメニュー -->
+				<button class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#navbarNav" aria-controls="navbarNav"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav">
+						<li class="nav-item"><a class="nav-link" href="/conf">設定</a></li>
+						<li class="nav-item"><a class="nav-link" href="/entry">デッキ入力に戻る</a></li>
+					</ul>
+				</div>
 			</div>
 		</nav>
 	</header>
@@ -46,14 +50,29 @@
 					<p>
 						<input type="radio" id="deal" name="shuffle" value="deal">
 						<label for="deal">ディールシャッフル</label>
-					</p>
-					<p>
-						<input type="radio" id="hindu" name="shuffle" value="hindu">
-						<label for="hindu">ヒンズーシャッフル</label>
+						<button type="button" class="btn btn-light" data-toggle="tooltip"
+							data-placement="right"
+							title="デッキの上からカードを1枚ずつ配って山をいくつか作り、全て配り終えたら山を1つにまとめるシャッフル方法">
+							<i class="bi-question-circle"></i>
+						</button>
 					</p>
 					<p>
 						<input type="radio" id="faro" name="shuffle" value="faro">
 						<label for="faro">ファローシャッフル</label>
+						<button type="button" class="btn btn-light" data-toggle="tooltip"
+							data-placement="right"
+							title="デッキを2つの山に分け、互いにカードが1枚ずつ間に挟まるように組み合わせるシャッフル方法">
+							<i class="bi-question-circle"></i>
+						</button>
+					</p>
+					<p>
+						<input type="radio" id="hindu" name="shuffle" value="hindu">
+						<label for="hindu">ヒンズーシャッフル</label>
+						<button type="button" class="btn btn-light" data-toggle="tooltip"
+							data-placement="right"
+							title="デッキを2つの山に分け、分けた山の上下が反対になるように重ね合わせるシャッフル方法">
+							<i class="bi-question-circle"></i>
+						</button>
 					</p>
 					<!-- 誤操作とエラー防止用に、デフォルト値は関係ないもので設定しておく -->
 					<p>
@@ -66,6 +85,33 @@
 				<a href="/reset">
 					<button type="button" value="初めからシャッフル" class="btn btn-danger">初めからシャッフル</button>
 				</a>
+				<p></p>
+				<!-- 設定値を表示 -->
+				<div th:object="${config}">
+					<h1 class="h2">現在の設定値</h1>
+					<h2 class="h3">ディールシャッフル</h2>
+					<ul>
+						<li>カードを分ける山の個数:<br> <span th:text="*{dealStacks}"></span>個
+						</li>
+						<li>山に配るカードの枚数が0,2枚にブレる確率の合計:<br> <span
+							th:text="*{dealFluc}"></span>%
+						</li>
+					</ul>
+
+					<h2 class="h3">ファローシャッフル</h2>
+					<ul>
+						<li>山に配るカードの枚数が0,2枚にブレる確率の合計:<br> <span
+							th:text="*{faroFluc}"></span>%
+						</li>
+					</ul>
+
+					<h2 class="h3">ヒンズーシャッフル・ファローシャッフル共通</h2>
+					<ul>
+						<li>分ける山の枚数が半分からブレる枚数のデッキに対する割合:<br> <span
+							th:text="*{splitFluc}"></span>%
+						</li>
+					</ul>
+				</div>
 			</div>
 
 			<div class="col-6 col-md-3">
@@ -100,6 +146,22 @@
 
 		</div>
 	</div>
+
+	<!-- Script -->
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+		integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+		integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+		integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+		crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		$('[data-toggle="tooltip"]').tooltip();
+	</script>
 
 </body>
 </html>
