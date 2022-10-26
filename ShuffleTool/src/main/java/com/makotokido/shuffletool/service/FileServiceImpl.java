@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.makotokido.shuffletool.entity.Config;
 import com.makotokido.shuffletool.entity.DeckList;
 
-// ファイルの読み書きを行うサービスクラス
+// // デッキリストと設定値のファイル読み書きを担当するサービスクラス
 @Service
 public class FileServiceImpl implements FileService {
 	/*
@@ -22,14 +22,15 @@ public class FileServiceImpl implements FileService {
 	@Autowired
 	private DeckList decklist;
 
+	// デッキリストのファイルを読み込み、エンティティに保持
 	@Override
 	public void loadDeck(Path path) {
 		// デッキリストをファイルから読み込み
 		List<String> list = loadFile(path);
-		// シャッフル度合がわかるよう、それぞれのカードに番号を振る
+		// それぞれのカードに番号を振る
 		for (int id = 0; id < list.size(); id++) {
 			// 1からリストの順番に番号を名前の前にくっつける
-			// スペースの数は桁に応じて変える(2桁枚を想定)
+			// スペースの数は桁に応じて変える(2桁枚までを想定)
 			String sp;
 			if (id < 9) {
 				sp = "&nbsp;&nbsp;&nbsp;";
@@ -43,6 +44,7 @@ public class FileServiceImpl implements FileService {
 		decklist.setOriginal(list);
 	}
 
+	// 入力されたデッキリストをファイルに書き込む
 	@Override
 	public void writeDeck(String deck, Path path) {
 		// ファイルを書き込めるよう、listに格納
@@ -56,10 +58,10 @@ public class FileServiceImpl implements FileService {
 		}
 	}
 
-	// デッキリストをtextareaの初期値として表示できるようにStringに変換
+	// ファイルから読み込んだデッキリストをtextareaの初期値として表示できるようにStringに変換
 	@Override
 	public String deckToString(Path path) {
-		// builderに結果を格納
+		// builderに読み込み結果を格納
 		StringBuilder builder = new StringBuilder();
 		// デッキリストをファイルから取得
 		List<String> list = loadFile(path);
@@ -89,15 +91,15 @@ public class FileServiceImpl implements FileService {
 	private final int DEALFLUC = 5;
 	private final String DFLUC = "dealfluc";
 
-	// ヒンズーシャッフル・ファローシャッフル共通
-	// 分ける山の枚数が半分からブレる枚数のデッキに対する割合(単位:%)
-	private final int SPLITFLUC = 13;
-	private final String SFLUC = "splitfluc";
-
 	// ファローシャッフル
-	// 山を組み合わせる際に、間に挟まるカードが0,2,3枚のいずれかになる確率(単位:%)
+	// 山を組み合わせる際に、間に挟まるカードが2,3枚のいずれかになる確率(単位:%)
 	private int FAROFLUC = 20;
 	private final String FFLUC = "farofluc";
+
+	// ヒンズーシャッフル・ファローシャッフル共通
+	// 分ける山の枚数がちょうど半分からブレる最大枚数のデッキに対する割合(単位:%)
+	private final int SPLITFLUC = 13;
+	private final String SFLUC = "splitfluc";
 
 	// 設定値のファイルを読み込み、エンティティに保持
 	@Override
@@ -139,10 +141,8 @@ public class FileServiceImpl implements FileService {
 					// 何もしない
 				}
 			} catch (NumberFormatException e) {
-				System.out.println("数値形式ではありません");
 				e.printStackTrace();
 			}
-
 		}
 
 		// 読み込んだファイルに設定値が存在しない場合、デフォルト値をエンティティに設定
@@ -181,8 +181,8 @@ public class FileServiceImpl implements FileService {
 	// 設定値をデフォルトに戻す
 	@Override
 	public void setDefault(Path path) {
-		// 設定値のファイルが空白の場合、設定値がデフォルトになるのを利用
-		// ファイルを空白に設定
+		// 設定値のファイルが空白の場合、設定値がデフォルトになることを利用
+		// 設定値のファイルを空白に設定
 		try {
 			Files.write(path, new ArrayList<String>(), StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
@@ -198,8 +198,7 @@ public class FileServiceImpl implements FileService {
 	/*
 	 * ユーティリティメソッド
 	 */
-
-	// 与えられたパスのテキストファイルを1行ごとにList<String>で返す
+	// 与えられたパスのテキストファイルを1行ごとにList<String>の要素にして返す
 	private List<String> loadFile(Path path) {
 		List<String> lines = null;
 		try {

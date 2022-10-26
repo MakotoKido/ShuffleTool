@@ -43,8 +43,8 @@
 			<label for="dealstacks" class="col-sm-5 col-form-label">カードを分ける山の個数(3~10個)</label>
 			<div class="col-sm-5">
 				<input type="text" class="form-control" th:field="*{dealStacks}">
-				<table th:if="${#fields.hasErrors('dealStacks')}"
-					class="text-danger">
+				<!-- エラー表示 -->
+				<table th:if="${#fields.hasErrors('dealStacks')}" class="text-danger">
 					<tr th:each="err:${#fields.errors('dealStacks')}">
 						<td th:text="${err}"></td>
 					</tr>
@@ -55,6 +55,7 @@
 			<label for="dealfluc" class="col-sm-5 col-form-label">山に配るカードの枚数が0,2枚にブレる確率の合計(単位:%)</label>
 			<div class="col-sm-5">
 				<input type="text" class="form-control" th:field="*{dealFluc}">
+				<!-- エラー表示 -->
 				<table th:if="${#fields.hasErrors('dealFluc')}" class="text-danger">
 					<tr th:each="err:${#fields.errors('dealFluc')}">
 						<td th:text="${err}"></td>
@@ -67,6 +68,7 @@
 			<label for="farofluc" class="col-sm-5 col-form-label">山を組み合わせる際に、間に挟まるカードの枚数が2,3枚にブレる確率の合計(単位:%)</label>
 			<div class="col-sm-5">
 				<input type="text" class="form-control" th:field="*{faroFluc}">
+				<!-- エラー表示 -->
 				<table th:if="${#fields.hasErrors('faroFluc')}" class="text-danger">
 					<tr th:each="err:${#fields.errors('faroFluc')}">
 						<td th:text="${err}"></td>
@@ -76,9 +78,10 @@
 		</div>
 		<h2 class="h3">ヒンズーシャッフル・ファローシャッフル共通</h2>
 		<div class="row mb-3">
-			<label for="splitfluc" class="col-sm-5 col-form-label">分ける山の枚数が半分からブレる枚数のデッキに対する割合(単位:%)</label>
+			<label for="splitfluc" class="col-sm-5 col-form-label">分ける山の枚数がちょうど半分からブレる最大枚数のデッキに対する割合(単位:%)</label>
 			<div class="col-sm-5">
 				<input type="text" class="form-control" th:field="*{splitFluc}">
+				<!-- エラー表示 -->
 				<table th:if="${#fields.hasErrors('splitFluc')}" class="text-danger">
 					<tr th:each="err:${#fields.errors('splitFluc')}">
 						<td th:text="${err}"></td>

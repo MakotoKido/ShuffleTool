@@ -2,6 +2,8 @@ package com.makotokido.shuffletool.controller;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -70,18 +72,18 @@ public class RequesrtParamController {
 	// デッキリストの入力を受け取り、シャッフル画面を表示
 	@PostMapping("entry")
 	public String resultView(@RequestParam String deck, Model model) {
-		// デッキが空の場合、再入力
+		// デッキの入力が空文字の場合、再度入力画面に戻る
 		if (deck.equals("")) {
 			model.addAttribute("warning", "デッキリストを入力してください。");
 			return "entry";
 		}
-		// デッキリスト入力値をサニタイズ(番号を振ってスペースを入れる都合上必要)
+		// デッキリストの入力値をサニタイズ(番号を振ってスペースを入れる都合上必要)
 		deck = saniImput(deck);
 		// 入力内容をファイルに書き込み
 		fileservice.writeDeck(deck, deckpath);
 		// 書き込んだ内容を読み込み
 		fileservice.loadDeck(deckpath);
-		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		// シャッフル画面に表示する要素をセット
 		addAttribs(model);
 		return "result";
 	}
@@ -89,17 +91,17 @@ public class RequesrtParamController {
 	/*
 	 * シャッフル結果を表示
 	 */
-	// シャッフル方法を受け取りシャッフル後のデッキリストを表示
+	// シャッフル方法を受け取り、シャッフルを行って結果を表示
 	@PostMapping("result")
 	public String resultShuffle(@RequestParam String shuffle, Model model) {
-		// いずれの設定値も0を許容しないため、初期化されていない場合はファイルから改めて初期化を行う
-		if (0 == conf.getDealFluc() || 0 == conf.getDealStacks() || 0 == conf.getFaroFluc()
-				|| 0 == conf.getSplitFluc()) {
+		// 設定値が初期化されていない場合はファイルから改めて初期化を行う
+		if (Objects.isNull(conf.getDealStacks()) || Objects.isNull(conf.getFaroFluc())
+				|| Objects.isNull(conf.getDealFluc()) || Objects.isNull(conf.getSplitFluc())) {
 			fileservice.loadConfig(confpath);
 		}
 		// 与えた方法でシャッフルを行う
 		shuffleservice.shuffle(decklist, shuffle);
-		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		// シャッフル画面に表示する要素をセット
 		addAttribs(model);
 		return "result";
 	}
@@ -107,7 +109,7 @@ public class RequesrtParamController {
 	// 設定画面から直接シャッフル画面に戻る場合
 	@GetMapping("result")
 	public String resultView(Model model) {
-		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		// シャッフル画面に表示する要素をセット
 		addAttribs(model);
 		return "result";
 	}
@@ -117,7 +119,7 @@ public class RequesrtParamController {
 	public String resetShuffle(Model model) {
 		// シャッフル結果・履歴を削除
 		initShuffle();
-		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		// シャッフル画面に表示する要素をセット
 		addAttribs(model);
 		return "result";
 	}
@@ -125,10 +127,10 @@ public class RequesrtParamController {
 	/*
 	 * 設定を行う
 	 */
-	// 設定値を入力する画面に遷移
+	// 設定値入力画面に遷移
 	@GetMapping("conf")
 	public String configView(Model model) {
-		// 現在の設定値を表示させる
+		// 現在の設定値を初期値として表示させる
 		model.addAttribute(conf);
 		return "config";
 	}
@@ -140,7 +142,7 @@ public class RequesrtParamController {
 		fileservice.setDefault(confpath);
 		// シャッフル結果・履歴を削除
 		initShuffle();
-		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		// シャッフル画面に表示する要素をセット
 		addAttribs(model);
 		return "result";
 	}
@@ -150,7 +152,7 @@ public class RequesrtParamController {
 	public String setConfig(@ModelAttribute @Validated Config conf, BindingResult result, Model model) {
 		// 入力チェックされた場合
 		if (result.hasErrors()) {
-			// 設定画面に戻る
+			// 設定値入力画面に戻る
 			return "config";
 		}
 		// ファイルを書き込み
@@ -159,7 +161,7 @@ public class RequesrtParamController {
 		fileservice.loadConfig(confpath);
 		// シャッフル結果・履歴を削除
 		initShuffle();
-		// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+		// シャッフル画面に表示する要素をセット
 		addAttribs(model);
 		// シャッフル画面に戻る
 		return "result";
@@ -207,7 +209,7 @@ public class RequesrtParamController {
 		fileservice.loadConfig(confpath);
 	}
 
-	// シャッフル画面に表示するデッキリストとシャッフル履歴をセット
+	// シャッフル画面に表示する要素をセット
 	private void addAttribs(Model model) {
 		model.addAttribute(decklist);
 		model.addAttribute(history);
@@ -219,7 +221,5 @@ public class RequesrtParamController {
 		decklist.setResult(null);
 		history.setHistory(null);
 	}
-
-	// TODO:シャッフル方法のヘルプをresultに
 
 }

@@ -76,8 +76,7 @@
 					</p>
 					<!-- 誤操作とエラー防止用に、デフォルト値は関係ないもので設定しておく -->
 					<p>
-						<input type="radio" id="none" name="shuffle" value="none"
-							hidden="true" checked>
+						<input type="radio" id="none" name="shuffle" value="none" hidden="true" checked>
 					</p>
 					<input type="submit" value="シャッフル" class="btn btn-dark">
 				</form>
@@ -91,24 +90,25 @@
 					<h1 class="h2">現在の設定値</h1>
 					<h2 class="h3">ディールシャッフル</h2>
 					<ul>
-						<li>カードを分ける山の個数:<br> <span th:text="*{dealStacks}"></span>個
+						<li>カードを分ける山の個数:<br>
+							<span th:text="*{dealStacks}"></span>個
 						</li>
-						<li>山に配るカードの枚数が0,2枚にブレる確率の合計:<br> <span
-							th:text="*{dealFluc}"></span>%
+						<li>山に配るカードの枚数が0,2枚にブレる確率の合計:<br>
+							<span th:text="*{dealFluc}"></span>%
 						</li>
 					</ul>
 
 					<h2 class="h3">ファローシャッフル</h2>
 					<ul>
-						<li>山に配るカードの枚数が0,2枚にブレる確率の合計:<br> <span
-							th:text="*{faroFluc}"></span>%
+						<li>山に配るカードの枚数が0,2枚にブレる確率の合計:<br>
+							<span th:text="*{faroFluc}"></span>%
 						</li>
 					</ul>
 
 					<h2 class="h3">ヒンズーシャッフル・ファローシャッフル共通</h2>
 					<ul>
-						<li>分ける山の枚数が半分からブレる枚数のデッキに対する割合:<br> <span
-							th:text="*{splitFluc}"></span>%
+						<li>分ける山の枚数がちょうど半分からブレる最大枚数のデッキに対する割合:<br>
+							<span th:text="*{splitFluc}"></span>%
 						</li>
 					</ul>
 				</div>

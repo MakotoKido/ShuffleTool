@@ -13,10 +13,10 @@ import lombok.Data;
 @SessionScope
 public class DeckList implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-//	読み込んだデッキリストを保持
+
+	// ファイルから読み込んだデッキリストを保持
 	private List<String> original;
-	
-//	シャッフル後のデッキリストを保持
+
+	// シャッフル後のデッキリストを保持
 	private List<String> result;
 }
